@@ -1,0 +1,24 @@
+﻿@model Sport_Match.Models.Event
+
+<h2>@Model.Name</h2>
+<p>Sport: @Model.Sport</p>
+<p>Lokacija: @Model.Location</p>
+<p>Datum: @Model.StartDateTime</p>
+<p>Privatno: @(Model.IsPrivate ? "Da" : "Ne")</p>
+
+<hr />
+
+@if (TempData["Status"] != null)
+{
+    <p>@TempData["Status"]</p>
+}
+
+<form asp-action="Register" method="post">
+    <input type="hidden" name="eventId" value="@Model.Id" />
+    <button type="submit">Prijavi se</button>
+</form>
+
+<form asp-action="Unregister" method="post" style="margin-top:10px;">
+    <input type="hidden" name="eventId" value="@Model.Id" />
+    <button type="submit">Odustani</button>
+</form>

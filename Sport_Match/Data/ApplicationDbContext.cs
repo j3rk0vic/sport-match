@@ -13,5 +13,8 @@ namespace Sport_Match.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<User> Users { get; set; }
+
+        public DbSet<EventRegistration> EventRegistrations { get; set; }
+
     }
 }

@@ -24,6 +24,9 @@ namespace Sport_Match.Models
 
         public bool IsPrivate { get; set; }
 
+        public int Capacity { get; set; }       
+        public int CurrentParticipants { get; set; } 
+
 
     }
 }

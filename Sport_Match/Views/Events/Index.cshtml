@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Sport_Match.Models.Event>
+
+@{
+ 
+    var name = Context.Request.Query["Name"].ToString();
+    var sport = Context.Request.Query["Sport"].ToString();
+    var location = Context.Request.Query["Location"].ToString();
+    var dateFrom = Context.Request.Query["DateFrom"].ToString();
+    var dateTo = Context.Request.Query["DateTo"].ToString();
+    var isPrivate = Context.Request.Query["IsPrivate"].ToString();
+}
+
+<h2>Pretraživanje događaja</h2>
+
+<form method="get">
+
+    <input name="Name"
+           placeholder="Naziv"
+           value="@name" />
+
+    <input name="Sport"
+           placeholder="Sport"
+           value="@sport" />
+
+    <input name="Location"
+           placeholder="Lokacija"
+           value="@location" />
+
+    <label>Od:</label>
+    <input type="date"
+           name="DateFrom"
+           value="@dateFrom" />
+
+    <label>Do:</label>
+    <input type="date"
+           name="DateTo"
+           value="@dateTo" />
+
+    <select name="IsPrivate">
+        <option value="">Bilo koji</option>
+        <option value="true" selected="@(isPrivate == "true")">Privatni</option>
+        <option value="false" selected="@(isPrivate == "false")">Javni</option>
+    </select>
+
+    <button type="submit">Pretraži</button>
+</form>
+
+<hr />
+
+@if (!Model.Any())
+{
+    <p>Nema rezultata.</p>
+}
+else
+{
+    foreach (var e in Model)
+    {
+        <div>
+            <b>@e.Name</b> —
+            @e.Sport —
+            @e.StartDateTime.ToShortDateString() —
+            @e.Location
+        </div>
+    }
+}
