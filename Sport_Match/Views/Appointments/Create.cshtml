@@ -1,0 +1,145 @@
+﻿@model Sport_Match.Models.Appointment
+
+@{
+    ViewData["Title"] = "Detalji termina";
+}
+
+@if (ViewBag.Type != null)
+{
+    <p style="color:gray; font-size:14px;">Odabrano: @ViewBag.Type</p>
+}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    body {
+        background: white;
+    }
+
+    .input-label {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .input-box {
+        background: #f1f6ff;
+        border-radius: 18px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .input-field,
+    textarea {
+        width: 100%;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .icon-right {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #4a4a4a;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+        background: #f1f6ff;
+        border: none;
+        height: 50px;
+        font-size: 15px;
+    }
+
+    .time-icon {
+        position: absolute;
+        right: 22px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #4a4a4a;
+    }
+
+    .submit-btn {
+        background: #2f6eff;
+        color: white;
+        border: none;
+        padding: 12px 26px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        margin-top: 15px;
+        float: right;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+</style>
+
+<h2 style="margin-bottom: 25px;">Detalji termina</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="input-label">Odaberi sport</div>
+    <div class="input-box">
+        <input asp-for="Title" class="input-field" placeholder="Nogomet, košarka, odbojka…" />
+        <i class="fa-solid fa-chevron-down icon-right"></i>
+    </div>
+
+    <div class="input-label">Odaberi lokaciju</div>
+    <div class="input-box">
+        <input asp-for="Location" class="input-field" placeholder="Dvorana, igralište, kampus…" />
+        <i class="fa-solid fa-location-dot icon-right"></i>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-label">Datum</div>
+            <div class="input-box">
+                <input asp-for="Date" type="date" class="input-field" />
+                <i class="fa-regular fa-calendar icon-right"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6 mt-2">
+            <div class="input-label">Vrijeme početka</div>
+            <div class="position-relative">
+                <input asp-for="StartTime" type="time" class="form-control rounded-pill px-4" />
+                <i class="fa-regular fa-clock time-icon"></i>
+            </div>
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <div class="input-label">Vrijeme završetka</div>
+            <div class="position-relative">
+                <input asp-for="EndTime" type="time" class="form-control rounded-pill px-4" />
+                <i class="fa-regular fa-clock time-icon"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="input-label mt-4">Tekstualne napomene</div>
+    <div class="input-box">
+        <textarea asp-for="Notes" rows="3" placeholder="Dodaj dodatne informacije…"></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">
+        Potvrdi termin <i class="fa-solid fa-check"></i>
+    </button>
+
+</form>

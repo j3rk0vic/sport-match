@@ -4,25 +4,38 @@
     ViewData["Title"] = "Prijava";
 }
 
-<h2>Prijava</h2>
+<div class="auth-page">
+    <div class="auth-card">
 
-<form asp-action="Login" method="post">
-    <div asp-validation-summary="ModelOnly"></div>
+        <h1 class="auth-title">SportMatch</h1>
+        <p class="auth-subtitle">Igraj. Poveži se. Napreduj.</p>
 
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email"></span>
+        <form asp-action="Login" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <input asp-for="Email" class="form-control auth-input" placeholder="E-mail" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Lozinka" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="auth-btn auth-btn-primary">
+                Prijavi se
+            </button>
+
+            <a asp-controller="Account" asp-action="Register" class="auth-btn-secondary">
+                Nemaš račun? Registriraj se
+            </a>
+
+        </form>
+
     </div>
-
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Prijavi se</button>
-</form>
+</div>
 
 @section Scripts {
     @{

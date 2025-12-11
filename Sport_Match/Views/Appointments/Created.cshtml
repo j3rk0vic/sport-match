@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Termin kreiran";
+}
+
+<div style="margin-top: 50px; text-align:center;">
+    <h2 style="color:#2f6eff;">Termin je uspješno kreiran!</h2>
+
+    <p style="font-size:18px; color:gray; margin-top:15px;">
+        Vaš termin je spremljen.
+    </p>
+
+    <!-- Gumb za povratak -->
+    <a href="/Appointments/Index"
+       style="margin-top:25px; display:inline-block; padding:12px 24px;
+              background:#2f6eff; color:white; border-radius:10px; text-decoration:none;">
+        Povratak na termine
+    </a>
+
+    <!-- NOVO: Dodaj u Google kalendar -->
+    <div style="margin-top: 25px;">
+        <a class="btn btn-primary"
+           href="/Auth/Login?returnUrl=/Appointments/AddToGoogle">
+            Dodaj u Google kalendar
+        </a>
+
+    </div>
+</div>

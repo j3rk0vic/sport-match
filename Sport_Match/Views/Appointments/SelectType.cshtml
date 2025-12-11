@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Odaberi tip termina";
+}
+
+<style>
+    body {
+        background: #f5f9ff;
+    }
+
+    .full-page {
+        min-height: 80vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 80px;
+    }
+
+    .option-card {
+        width: 420px;
+        padding: 40px;
+        background: #eaf1ff;
+        border-radius: 25px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        transition: 0.25s;
+        cursor: pointer;
+    }
+
+        .option-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+    .option-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+
+    .option-desc {
+        font-size: 15px;
+        color: gray;
+        margin-bottom: 20px;
+    }
+
+    .option-link {
+        font-weight: 600;
+        color: #2f6eff;
+        text-decoration: none;
+    }
+
+        .option-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<div class="full-page">
+
+    <!-- Opcija 1: Trening -->
+    <a href="/Appointments/Create?type=trening" class="option-card text-dark" style="text-decoration:none;">
+        <p>Opcija 1</p>
+        <div class="option-title">Trening</div>
+        <div class="option-desc">
+            Zakaži tehnički, kondicijski ili timski trening. Postavi intenzitet, broj sudionika i trajanje.
+        </div>
+        <span class="option-link">Nastavi s treningom</span>
+    </a>
+
+    <!-- Opcija 2: Utakmica -->
+    <a href="/Appointments/Create?type=utakmica" class="option-card text-dark" style="text-decoration:none;">
+        <p>Opcija 2</p>
+        <div class="option-title">Utakmica</div>
+        <div class="option-desc">
+            Organiziraj prijateljsku ili natjecateljsku utakmicu. Pozovi ekipe i rezerviraj termin.
+        </div>
+        <span class="option-link">Nastavi s utakmicom</span>
+    </a>
+
+</div>

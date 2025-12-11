@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sport_Match.Models;
 
-
 namespace Sport_Match.Data
 {
     public class ApplicationDbContext : DbContext
@@ -12,6 +11,7 @@ namespace Sport_Match.Data
         }
 
         public DbSet<Event> Events { get; set; }
-        public DbSet<User> Users {  get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

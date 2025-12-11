@@ -14,13 +14,10 @@ namespace SportMatch.Controllers
             _eventService = eventService;
         }
 
-
         public IActionResult Create()
         {
-
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -28,22 +25,17 @@ namespace SportMatch.Controllers
         {
             if (!ModelState.IsValid)
             {
-
                 return View(dto);
             }
 
             await _eventService.CreateEventAsync(dto);
 
-
             return RedirectToAction("Index", "Events");
         }
 
-
         public IActionResult Index()
         {
-
             return View();
         }
     }
 }
-
