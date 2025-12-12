@@ -10,6 +10,7 @@ namespace SportMatch.Controllers
     {
         private readonly IEventService _eventService;
         private readonly IRegistrationService _registrationService;
+        private int userId;
 
         public EventsController(IEventService eventService, IRegistrationService registrationService)
         {
@@ -47,7 +48,7 @@ namespace SportMatch.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(int eventId)
         {
-            int userId = 1; // TEMP
+            int userId = 1;
             var message = await _registrationService.RegisterAsync(eventId, userId);
 
             TempData["Status"] = message;

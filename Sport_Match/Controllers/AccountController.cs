@@ -16,14 +16,13 @@ namespace Sport_Match.Controllers
             _userService = userService;
         }
 
-        // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST: /Account/Register
+      
         [HttpPost]
         public async Task<IActionResult> Register(RegisterUserDto model)
         {
@@ -43,7 +42,6 @@ namespace Sport_Match.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -51,7 +49,6 @@ namespace Sport_Match.Controllers
             return View();
         }
 
-        // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginUserDto model, string? returnUrl = null)
         {
@@ -99,7 +96,7 @@ namespace Sport_Match.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // POST: /Account/Logout
+       
         [HttpPost]
         public async Task<IActionResult> Logout()
         {

@@ -13,20 +13,18 @@ public class AppointmentsController : Controller
         _calendarService = calendarService;
     }
 
-    // PRVA STRANICA – izbor trening/utakmica
+    
     public IActionResult Index()
     {
         return View("SelectType");
     }
 
-    // CREATE GET
     public IActionResult Create(string? type)
     {
         ViewBag.Type = type;
         return View();
     }
 
-    // CREATE POST
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Appointment appointment)
@@ -36,7 +34,7 @@ public class AppointmentsController : Controller
             return View(appointment);
         }
 
-        // Nakon spremanja u Google Calendar
+       
         return RedirectToAction("Created");
     }
 
@@ -50,7 +48,7 @@ public class AppointmentsController : Controller
     {
         var accessToken = await HttpContext.GetTokenAsync("access_token");
 
-        // ovdje bi trebala biti logika dodavanja eventa u Google Calendar
+       
         return Redirect("https://calendar.google.com");
     }
 
@@ -63,8 +61,7 @@ public class AppointmentsController : Controller
         if (accessToken == null)
             return Content("Greška: Nema Google tokena.");
 
-        // Ovdje kreiraš event ponovo ili čuvaš u Session prije
-        // Za sada samo poruka:
+        
         return Content("Google kalendar je sinkroniziran!");
     }
 

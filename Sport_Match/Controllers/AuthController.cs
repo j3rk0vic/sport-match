@@ -16,7 +16,6 @@ namespace Sport_Match.Controllers
             }, "Google");
         }
 
-        // LOGOUT
         public IActionResult Logout()
         {
             return SignOut(

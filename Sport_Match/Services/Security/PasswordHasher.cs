@@ -4,10 +4,7 @@ namespace Sport_Match.Services.Security
 {
     public class PasswordHasher
     {
-        // kad registriran korisnika
-        // - generiran salt
-        // - izracunan hash
-        // - vracan oboje
+       
         public static (string hash, string salt) HashPassword(string password)
         {
             byte[] saltBytes = new byte[16];

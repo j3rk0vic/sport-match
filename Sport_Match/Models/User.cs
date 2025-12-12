@@ -4,7 +4,7 @@ namespace Sport_Match.Models
 {
     public class User
     {
-        public int id { get; set; } // primarni kljuc
+        public int id { get; set; } 
 
         [Required]
         [EmailAddress]

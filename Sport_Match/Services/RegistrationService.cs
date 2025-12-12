@@ -52,6 +52,11 @@ public class RegistrationService : IRegistrationService
         return "Event je popunjen — dodani ste na listu čekanja.";
     }
 
+    public Task RegisterAsync(int eventId, object userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<string> UnregisterAsync(int eventId, int userId)
     {
         var registration = await _db.EventRegistrations

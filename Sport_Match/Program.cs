@@ -26,33 +26,27 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 
-    // Google endpoints
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://oauth2.googleapis.com/token";
     options.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
 
-    // redirect URL
     options.CallbackPath = "/signin-google";
 
-    // scopes
     options.Scope.Add("email");
     options.Scope.Add("profile");
     options.Scope.Add("https://www.googleapis.com/auth/calendar");
 
     options.SaveTokens = true;
 
-    // Google account selector
     options.Events.OnRedirectToAuthorizationEndpoint = context =>
     {
         context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
         return Task.CompletedTask;
     };
 
-    // Map user info
     options.ClaimActions.MapJsonKey("picture", "picture");
     options.ClaimActions.MapJsonKey("locale", "locale");
 
-    // Fetch user data
     options.Events.OnCreatingTicket = async context =>
     {
         var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
@@ -66,26 +60,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ----------------------------------
-// MVC + DATABASE
-// ----------------------------------
+
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ----------------------------------
-// DEPENDENCY INJECTION
-// ----------------------------------
+
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<GoogleCalendarService>();
 
-// ----------------------------------
-// BUILD APP
-// ----------------------------------
 
 var app = builder.Build();
 
