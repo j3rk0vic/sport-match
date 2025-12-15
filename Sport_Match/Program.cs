@@ -5,6 +5,7 @@ using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
 using System.Net.Http;
+using Sport_Match.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<GoogleCalendarService>();
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
 
 
 var app = builder.Build();

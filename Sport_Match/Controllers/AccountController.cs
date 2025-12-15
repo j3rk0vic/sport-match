@@ -4,16 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using Sport_Match.Dtos;
 using Sport_Match.Services;
 using System.Security.Claims;
+using Sport_Match.Services.Auth;
 
 namespace Sport_Match.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IAuthService authService)
         {
             _userService = userService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -65,28 +68,9 @@ namespace Sport_Match.Controllers
                 return View(model);
             }
 
-            
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Email)
-            };
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims,
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+            await _authService.SignInAsync(HttpContext, user, isPersistent: true);
 
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true 
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties
-            );
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
@@ -100,9 +84,7 @@ namespace Sport_Match.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+            await _authService.SignOutAsync(HttpContext);
 
             return RedirectToAction("Index", "Home");
         }
