@@ -6,6 +6,7 @@ using Sport_Match.Repositories;
 using Sport_Match.Services;
 using System.Net.Http;
 using Sport_Match.Services.Auth;
+using Sport_Match.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<IAuthService, CookieAuthService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasherAdapter>();
 
 
 var app = builder.Build();

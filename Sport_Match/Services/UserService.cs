@@ -9,10 +9,12 @@ namespace Sport_Match.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<bool> RegisterAsync(RegisterUserDto dto)
@@ -23,7 +25,7 @@ namespace Sport_Match.Services
                 return false;
             }
 
-            var (hash, salt) = PasswordHasher.HashPassword(dto.Password);
+            var (hash, salt) = _passwordHasher.HashPassword(dto.Password);
 
             var user = new User
             {
@@ -46,11 +48,8 @@ namespace Sport_Match.Services
                 return null;
             }
 
-            bool passwordValid = PasswordHasher.VerifyPassword(
-                dto.Password,
-                user.PasswordHash,
-                user.PasswordSalt
-            );
+            bool passwordValid = _passwordHasher.VerifyPassword(dto.Password, user.PasswordHash, user.PasswordSalt);
+
 
             if (!passwordValid)
             {
