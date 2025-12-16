@@ -76,6 +76,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<IAuthService, CookieAuthService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasherAdapter>();
+builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
+
 
 
 var app = builder.Build();
