@@ -6,12 +6,12 @@ using Sport_Match.Services.Security;
 
 namespace Sport_Match.Services
 {
-    public class UserService : IUserService
+    public class UserService : IUserRegistrationService, IUserAuthenticationService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly Services.Security.IPasswordHasher _passwordHasher;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        public UserService(IUserRepository userRepository, Services.Security.IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -20,10 +20,7 @@ namespace Sport_Match.Services
         public async Task<bool> RegisterAsync(RegisterUserDto dto)
         {
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
-            if (existingUser != null)
-            {
-                return false;
-            }
+            if (existingUser != null) return false;
 
             var (hash, salt) = _passwordHasher.HashPassword(dto.Password);
 
@@ -36,25 +33,16 @@ namespace Sport_Match.Services
 
             await _userRepository.AddAsync(user);
             await _userRepository.SaveChangesAsync();
-
             return true;
         }
 
-        public async Task<User?> AutenticateAsync(LoginUserDto dto)
+        public async Task<User?> AuthenticateAsync(LoginUserDto dto)
         {
             var user = await _userRepository.GetByEmailAsync(dto.Email);
-            if (user == null)
-            {
-                return null;
-            }
+            if (user == null) return null;
 
             bool passwordValid = _passwordHasher.VerifyPassword(dto.Password, user.PasswordHash, user.PasswordSalt);
-
-
-            if (!passwordValid)
-            {
-                return null;
-            }
+            if (!passwordValid) return null;
 
             return user;
         }

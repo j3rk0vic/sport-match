@@ -10,14 +10,20 @@ namespace Sport_Match.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IUserRegistrationService _registrationService;
+        private readonly IUserAuthenticationService _authenticationService;
         private readonly IAuthService _authService;
 
-        public AccountController(IUserService userService, IAuthService authService)
+        public AccountController(
+        IUserRegistrationService registrationService,
+        IUserAuthenticationService authenticationService,
+        Services.Auth.IAuthService authService)
         {
-            _userService = userService;
+            _registrationService = registrationService;
+            _authenticationService = authenticationService;
             _authService = authService;
         }
+
 
         [HttpGet]
         public IActionResult Register()
@@ -34,7 +40,7 @@ namespace Sport_Match.Controllers
                 return View(model);
             }
 
-            var success = await _userService.RegisterAsync(model);
+            var success = await _registrationService.RegisterAsync(model);
 
             if (!success)
             {
@@ -60,8 +66,9 @@ namespace Sport_Match.Controllers
                 return View(model);
             }
 
-            
-            var user = await _userService.AutenticateAsync(model);
+
+            var user = await _authenticationService.AuthenticateAsync(model);
+
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Neispravan email ili lozinka.");
