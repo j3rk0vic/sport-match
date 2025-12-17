@@ -1,17 +1,25 @@
-﻿
+﻿using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Sport_Match.Data;
 using Sport_Match.Dtos;
 using Sport_Match.Models;
+using Sport_Match.Services.Sorting;
 
 namespace Sport_Match.Services
 {
-    public class EventService
+    public class EventService : IEventReadService, IEventWriteService
+
     {
         private readonly ApplicationDbContext _db;
+        private readonly IEnumerable<IEventSortStrategy> _sortStrategies;
 
-        public EventService(ApplicationDbContext db)
+        public EventService(
+            ApplicationDbContext db,
+            IEnumerable<IEventSortStrategy> sortStrategies)
         {
             _db = db;
+            _sortStrategies = sortStrategies;
         }
 
         public IQueryable<Event> Search(EventSearchRequest req)
@@ -37,24 +45,53 @@ namespace Sport_Match.Services
                 q = q.Where(e => e.IsPrivate == req.IsPrivate);
 
           
-            q = req.SortBy switch
+            var strategy = _sortStrategies
+                .FirstOrDefault(s => s.CanHandle(req.SortBy));
+
+            if (strategy != null)
             {
-                "Name" => req.SortDesc ? q.OrderByDescending(e => e.Name) : q.OrderBy(e => e.Name),
-                "Sport" => req.SortDesc ? q.OrderByDescending(e => e.Sport) : q.OrderBy(e => e.Sport),
-                "Location" => req.SortDesc ? q.OrderByDescending(e => e.Location) : q.OrderBy(e => e.Location),
-                "IsPrivate" => req.SortDesc ? q.OrderByDescending(e => e.IsPrivate) : q.OrderBy(e => e.IsPrivate),
-                _ => req.SortDesc ? q.OrderByDescending(e => e.StartDateTime) : q.OrderBy(e => e.StartDateTime)
+                q = strategy.Apply(q, req.SortDesc);
+            }
+            else
+            {
+                q = req.SortDesc
+                    ? q.OrderByDescending(e => e.StartDateTime)
+                    : q.OrderBy(e => e.StartDateTime);
+            }
+
+            return q
+                .Skip((req.Page - 1) * req.PageSize)
+                .Take(req.PageSize);
+        }
+
+        public Task<IEnumerable<Event>> SearchEventsAsync(EventSearchRequest req)
+        {
+            IEnumerable<Event> result = Search(req).ToList();
+            return Task.FromResult(result);
+        }
+
+        public async Task<Event> CreateEventAsync(CreateEventDto dto)
+        {
+            var ev = new Event
+            {
+                Name = dto.Name,
+                Sport = dto.Sport,
+                Location = dto.Location,
+                IsPrivate = dto.IsPrivate,
+                StartDateTime = dto.Date.Date + dto.Time,
+                Capacity = 0,
+                CurrentParticipants = 0
             };
 
-          
-            return q.Skip((req.Page - 1) * req.PageSize).Take(req.PageSize);
+            await _db.Events.AddAsync(ev);
+            await _db.SaveChangesAsync();
+            return ev;
         }
+
+
         public async Task<Event> GetByIdAsync(int id)
         {
             return await _db.Events.FindAsync(id);
         }
-
-
     }
-
 }

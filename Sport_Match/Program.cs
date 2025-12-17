@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+using Sport_Match.Services.Sorting;
 using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
+// ================= AUTHENTICATION =================
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -29,7 +29,6 @@ builder.Services.AddAuthentication(options =>
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://oauth2.googleapis.com/token";
     options.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
-
     options.CallbackPath = "/signin-google";
 
     options.Scope.Add("email");
@@ -54,24 +53,29 @@ builder.Services.AddAuthentication(options =>
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
 
         var response = await context.Backchannel.SendAsync(request);
-
         var json = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         context.RunClaimActions(json.RootElement);
     };
 });
 
 
-
 builder.Services.AddControllersWithViews();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<GoogleCalendarService>();
+
+
+builder.Services.AddScoped<IEventReadService, EventService>();
+builder.Services.AddScoped<IEventWriteService, EventService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
+
 
 
 var app = builder.Build();
