@@ -5,6 +5,8 @@ using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
 using System.Net.Http;
+using Sport_Match.Services.Auth;
+using Sport_Match.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,8 +71,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRegistrationService>(sp =>
+    sp.GetRequiredService<UserService>());
+builder.Services.AddScoped<IUserAuthenticationService>(sp =>
+    sp.GetRequiredService<UserService>());
+
+
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasherAdapter>();
+
+
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
+
 builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
