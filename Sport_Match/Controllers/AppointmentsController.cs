@@ -13,10 +13,19 @@ public class AppointmentsController : Controller
         _appointmentService = appointmentService;
     }
 
-    public IActionResult Index()
+    [HttpGet]
+    public IActionResult SelectType()
     {
-        return View("SelectType");
+        return View();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var appointments = await _appointmentService.GetAllAsync();
+        return View(appointments);
+    }
+
 
     public IActionResult Create(string? type)
     {
@@ -26,15 +35,18 @@ public class AppointmentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(Appointment appointment)
+    public async Task<IActionResult> Create(Appointment appointment)
     {
         if (!ModelState.IsValid)
         {
             return View(appointment);
         }
 
+        await _appointmentService.CreateAsync(appointment);
+
         return RedirectToAction("Created");
     }
+
 
     public IActionResult Created()
     {
@@ -53,4 +65,8 @@ public class AppointmentsController : Controller
 
         return Content("Google kalendar je sinkroniziran!");
     }
+
+   
+
+
 }
