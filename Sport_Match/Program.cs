@@ -1,3 +1,4 @@
+using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -67,7 +68,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddScoped<IEventReadService, EventService>();
 builder.Services.AddScoped<IEventWriteService, EventService>();
@@ -75,7 +76,11 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
-builder.Services.AddScoped<GoogleCalendarService>();
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
+
 
 
 var app = builder.Build();
