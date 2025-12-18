@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+using Sport_Match.Services.Sorting;
 using System.Net.Http;
-using Sport_Match.Services.Auth;
-using Sport_Match.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 
 builder.Services.AddAuthentication(options =>
@@ -31,7 +29,6 @@ builder.Services.AddAuthentication(options =>
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://oauth2.googleapis.com/token";
     options.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
-
     options.CallbackPath = "/signin-google";
 
     options.Scope.Add("email");
@@ -56,44 +53,33 @@ builder.Services.AddAuthentication(options =>
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
 
         var response = await context.Backchannel.SendAsync(request);
-
         var json = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         context.RunClaimActions(json.RootElement);
     };
 });
 
 
-
 builder.Services.AddControllersWithViews();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRegistrationService>(sp =>
-    sp.GetRequiredService<UserService>());
-builder.Services.AddScoped<IUserAuthenticationService>(sp =>
-    sp.GetRequiredService<UserService>());
 
-
-builder.Services.AddScoped<IAuthService, CookieAuthService>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasherAdapter>();
-
-
-builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IEventReadService, EventService>();
+builder.Services.AddScoped<IEventWriteService, EventService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
+builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
-builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-
+builder.Services.AddScoped<GoogleCalendarService>();
 
 
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {
@@ -108,6 +94,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

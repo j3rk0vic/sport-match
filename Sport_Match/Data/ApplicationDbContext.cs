@@ -16,5 +16,7 @@ namespace Sport_Match.Data
 
         public DbSet<EventRegistration> EventRegistrations { get; set; }
 
+        public DbSet<PenaltyRule> PenaltyRules { get; set; }
+
     }
 }

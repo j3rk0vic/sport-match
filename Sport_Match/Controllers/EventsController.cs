@@ -2,23 +2,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Sport_Match.Dtos;
 using Sport_Match.Services;
-using Sport_Match.Models;
 
 namespace SportMatch.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly IEventService _eventService;
-        private readonly IRegistrationService _registrationService;
-        private int userId;
+        private readonly IEventReadService _eventReadService;
+        private readonly IEventWriteService _eventWriteService;
 
-        public EventsController(IEventService eventService, IRegistrationService registrationService)
+        public EventsController(
+            IEventReadService eventReadService,
+            IEventWriteService eventWriteService)
         {
-            _eventService = eventService;
-            _registrationService = registrationService;
+            _eventReadService = eventReadService;
+            _eventWriteService = eventWriteService;
         }
 
-       
         public IActionResult Create()
         {
             return View();
@@ -33,47 +32,26 @@ namespace SportMatch.Controllers
                 return View(dto);
             }
 
-            await _eventService.CreateEventAsync(dto);
+            
+            await _eventWriteService.CreateEventAsync(dto);
 
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Index([FromQuery] EventSearchRequest req)
         {
-            var events = await _eventService.SearchEventsAsync(req);
+            
+            var events = await _eventReadService.SearchEventsAsync(req);
             return View(events);
-        }
-
-    
-        [HttpPost]
-        public async Task<IActionResult> Register(int eventId)
-        {
-            int userId = 1;
-            var message = await _registrationService.RegisterAsync(eventId, userId);
-
-            TempData["Status"] = message;
-            return RedirectToAction("Details", new { id = eventId });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Unregister(int eventId)
-        {
-            int userId = 1;
-            var message = await _registrationService.UnregisterAsync(eventId, userId);
-
-            TempData["Status"] = message;
-            return RedirectToAction("Details", new { id = eventId });
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var ev = await _eventService.GetByIdAsync(id);
+            
+            var ev = await _eventReadService.GetByIdAsync(id);
             if (ev == null) return NotFound();
 
             return View(ev);
         }
-
-      
-
     }
 }
