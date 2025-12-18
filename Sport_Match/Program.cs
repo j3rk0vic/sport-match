@@ -6,7 +6,6 @@ using Sport_Match.Repositories;
 using Sport_Match.Services;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
-using Sport_Match.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,18 +68,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<GoogleCalendarService>();
-
 
 builder.Services.AddScoped<IEventReadService, EventService>();
 builder.Services.AddScoped<IEventWriteService, EventService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
 builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
-
+builder.Services.AddScoped<GoogleCalendarService>();
 
 
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {
@@ -95,6 +94,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

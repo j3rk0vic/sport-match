@@ -1,55 +1,53 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Models;
+using Sport_Match.Repositories;
 using Sport_Match.Services;
 using System;
 
 public class RegistrationService : IRegistrationService
 {
-    private readonly ApplicationDbContext _db;
+    private readonly IRegistrationRepository _repo;
 
-    public RegistrationService(ApplicationDbContext db)
+    public RegistrationService(IRegistrationRepository repo)
     {
-        _db = db;
+        _repo = repo;
     }
 
     public async Task<string> RegisterAsync(int eventId, int userId)
     {
-        var ev = await _db.Events.FindAsync(eventId);
+        var ev = await _repo.GetEventByIdAsync(eventId);
         if (ev == null)
             return "Event ne postoji.";
 
-        var already = await _db.EventRegistrations
-            .FirstOrDefaultAsync(r => r.EventId == eventId && r.UserId == userId);
-
+        var already = await _repo.GetRegistrationAsync(eventId, userId);
         if (already != null)
-            return already.IsConfirmed ? "Već ste prijavljeni." : "Već ste na listi čekanja.";
+            return already.IsConfirmed ? "vec ste prijavljeni." : "vec ste na listi cekanja.";
 
-       
         if (ev.CurrentParticipants < ev.Capacity)
         {
             ev.CurrentParticipants++;
 
-            _db.EventRegistrations.Add(new EventRegistration
+            await _repo.AddRegistrationAsync(new EventRegistration
             {
                 EventId = eventId,
                 UserId = userId,
                 IsConfirmed = true
             });
 
-            await _db.SaveChangesAsync();
-            return "Uspješno ste prijavljeni.";
+            await _repo.SaveChangesAsync();
+            return "uspjesno ste prijavljeni.";
         }
 
-        _db.EventRegistrations.Add(new EventRegistration
+        await _repo.AddRegistrationAsync(new EventRegistration
         {
             EventId = eventId,
             UserId = userId,
             IsConfirmed = false
         });
 
-        await _db.SaveChangesAsync();
-        return "Event je popunjen — dodani ste na listu čekanja.";
+        await _repo.SaveChangesAsync();
+        return "Event je popunjen — dodani ste na listu cekanja.";
     }
 
     public Task RegisterAsync(int eventId, object userId)
@@ -59,23 +57,19 @@ public class RegistrationService : IRegistrationService
 
     public async Task<string> UnregisterAsync(int eventId, int userId)
     {
-        var registration = await _db.EventRegistrations
-            .FirstOrDefaultAsync(r => r.EventId == eventId && r.UserId == userId);
-
+        var registration = await _repo.GetRegistrationAsync(eventId, userId);
         if (registration == null)
             return "Niste bili prijavljeni.";
 
-        var ev = await _db.Events.FindAsync(eventId);
+        var ev = await _repo.GetEventByIdAsync(eventId);
+        if (ev == null)
+            return "Event ne postoji.";
 
         if (registration.IsConfirmed)
         {
             ev.CurrentParticipants--;
 
-            var next = await _db.EventRegistrations
-                .Where(r => r.EventId == eventId && !r.IsConfirmed)
-                .OrderBy(r => r.CreatedAt)
-                .FirstOrDefaultAsync();
-
+            var next = await _repo.GetNextWaitlistedAsync(eventId);
             if (next != null)
             {
                 next.IsConfirmed = true;
@@ -83,9 +77,9 @@ public class RegistrationService : IRegistrationService
             }
         }
 
-        _db.EventRegistrations.Remove(registration);
-        await _db.SaveChangesAsync();
+        _repo.RemoveRegistration(registration);
+        await _repo.SaveChangesAsync();
 
-        return "Uspješno ste odjavljeni.";
+        return "uspjesno ste odjavljeni.";
     }
 }

@@ -6,7 +6,7 @@ using Sport_Match.Models;
 
 namespace Sport_Match.Services
 {
-    public class GoogleCalendarService
+    public class GoogleCalendarService : ICalendarService
     {
         public async Task<string> CreateEventAsync(string accessToken, Appointment appointment)
         {
