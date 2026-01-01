@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+using Sport_Match.Services.Facades;
+using Sport_Match.Services.Factories;
 using Sport_Match.Services.Auth;
 using Sport_Match.Services.Notification;
 using Sport_Match.Services.Registration;
@@ -66,12 +68,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 
 builder.Services.AddScoped<IEventReadService, EventService>();
 builder.Services.AddScoped<IEventWriteService, EventService>();
 builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
+builder.Services.AddScoped<GoogleCalendarService>();
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IEventFactory, EventFactory>();
+builder.Services.AddScoped<IEventFacade, EventFacade>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 

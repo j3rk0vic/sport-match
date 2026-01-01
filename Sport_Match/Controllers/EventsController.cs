@@ -1,21 +1,17 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Sport_Match.Dtos;
-using Sport_Match.Services;
+using Sport_Match.Services.Facades;
 
 namespace SportMatch.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly IEventReadService _eventReadService;
-        private readonly IEventWriteService _eventWriteService;
+        private readonly IEventFacade _eventFacade;
 
-        public EventsController(
-            IEventReadService eventReadService,
-            IEventWriteService eventWriteService)
+        public EventsController(IEventFacade eventFacade)
         {
-            _eventReadService = eventReadService;
-            _eventWriteService = eventWriteService;
+            _eventFacade = eventFacade;
         }
 
         public IActionResult Create()
@@ -32,24 +28,22 @@ namespace SportMatch.Controllers
                 return View(dto);
             }
 
-            
-            await _eventWriteService.CreateEventAsync(dto);
+            await _eventFacade.CreateAsync(dto);
 
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Index([FromQuery] EventSearchRequest req)
         {
-            
-            var events = await _eventReadService.SearchEventsAsync(req);
+            var events = await _eventFacade.SearchAsync(req);
             return View(events);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            
-            var ev = await _eventReadService.GetByIdAsync(id);
-            if (ev == null) return NotFound();
+            var ev = await _eventFacade.GetByIdAsync(id);
+            if (ev == null)
+                return NotFound();
 
             return View(ev);
         }
