@@ -6,6 +6,7 @@ using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
 using Sport_Match.Services.Auth;
+using Sport_Match.Services.Notification;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
 
@@ -84,6 +85,9 @@ builder.Services.AddScoped<IAuthService, CookieAuthService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
 
 
 
