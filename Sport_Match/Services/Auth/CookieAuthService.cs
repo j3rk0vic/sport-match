@@ -1,26 +1,21 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Sport_Match.Models;
-using System.Security.Claims;
 
 namespace Sport_Match.Services.Auth
 {
     public class CookieAuthService : IAuthService
     {
-        private bool isPersistent;
+        private readonly IClaimsPrincipalFactory _claimsFactory;
 
-        public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistant = true, bool isPersistent = false)
+        public CookieAuthService(IClaimsPrincipalFactory claimsFactory)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Email)
-            };
+            _claimsFactory = claimsFactory;
+        }
 
-            var claimsIdentity = new ClaimsIdentity(
-               claims,
-               CookieAuthenticationDefaults.AuthenticationScheme
-           );
+        public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistent = true)
+        {
+            var principal = _claimsFactory.Create(user);
 
             var authProperties = new AuthenticationProperties
             {
@@ -29,7 +24,7 @@ namespace Sport_Match.Services.Auth
 
             await httpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
+                principal,
                 authProperties
             );
         }

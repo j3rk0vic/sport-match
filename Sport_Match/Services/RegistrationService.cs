@@ -3,15 +3,18 @@ using Sport_Match.Data;
 using Sport_Match.Models;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+using Sport_Match.Services.Registration;
 using System;
 
 public class RegistrationService : IRegistrationService
 {
     private readonly IRegistrationRepository _repo;
+    private readonly IRegistrationStrategy _strategy;
 
-    public RegistrationService(IRegistrationRepository repo)
+    public RegistrationService(IRegistrationRepository repo, IRegistrationStrategy strategy)
     {
         _repo = repo;
+        _strategy = strategy;
     }
 
     public async Task<string> RegisterAsync(int eventId, int userId)

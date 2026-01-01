@@ -3,14 +3,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sport_Match.Models;
 using Sport_Match.Services;
+using Sport_Match.Services.Notification;
 
 public class AppointmentsController : Controller
 {
     private readonly IAppointmentService _appointmentService;
+    private readonly IReminderService _reminderService;
 
-    public AppointmentsController(IAppointmentService appointmentService)
+    public AppointmentsController(
+        IAppointmentService appointmentService,
+        IReminderService reminderService)
     {
         _appointmentService = appointmentService;
+        _reminderService = reminderService;
     }
 
     [HttpGet]
@@ -25,7 +30,6 @@ public class AppointmentsController : Controller
         var appointments = await _appointmentService.GetAllAsync();
         return View(appointments);
     }
-
 
     public IActionResult Create(string? type)
     {
@@ -44,9 +48,10 @@ public class AppointmentsController : Controller
 
         await _appointmentService.CreateAsync(appointment);
 
+        await _reminderService.ScheduleAsync(appointment);
+
         return RedirectToAction("Created");
     }
-
 
     public IActionResult Created()
     {
@@ -65,8 +70,4 @@ public class AppointmentsController : Controller
 
         return Content("Google kalendar je sinkroniziran!");
     }
-
-   
-
-
 }

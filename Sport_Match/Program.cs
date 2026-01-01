@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
+using Google.Apis.Calendar.v3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
@@ -6,11 +6,13 @@ using Sport_Match.Repositories;
 using Sport_Match.Services;
 using Sport_Match.Services.Facades;
 using Sport_Match.Services.Factories;
+using Sport_Match.Services.Auth;
+using Sport_Match.Services.Notification;
+using Sport_Match.Services.Registration;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -60,30 +62,43 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 builder.Services.AddControllersWithViews();
-
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 
 builder.Services.AddScoped<IEventReadService, EventService>();
 builder.Services.AddScoped<IEventWriteService, EventService>();
-builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-
 builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
 builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IEventFactory, EventFactory>();
 builder.Services.AddScoped<IEventFacade, EventFacade>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
+builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
+
+builder.Services.AddScoped<IClaimsPrincipalFactory, ClaimsPrincipalFactory>();
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
+
+builder.Services.AddScoped<IRegistrationStrategy, CapacityWaitlistStrategy>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -98,7 +113,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllerRoute(
     name: "default",
