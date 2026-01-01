@@ -5,6 +5,7 @@ using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
 using Sport_Match.Services.Auth;
+using Sport_Match.Services.Notification;
 using Sport_Match.Services.Registration;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
@@ -76,6 +77,13 @@ builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
 builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
 
 builder.Services.AddScoped<IClaimsPrincipalFactory, ClaimsPrincipalFactory>();
 builder.Services.AddScoped<IAuthService, CookieAuthService>();
