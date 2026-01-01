@@ -4,14 +4,12 @@
     {
         private readonly INotificationService _email;
 
-        public EmailOnlyStrategy()
+        public EmailOnlyStrategy(INotificationService email)
         {
-            _email = new LoggingNotificationDecorator(
-                NotificationFactory.Create("email"));
+            _email = email;
         }
 
         public Task NotifyAsync(string message)
             => _email.SendAsync(message);
     }
-
 }

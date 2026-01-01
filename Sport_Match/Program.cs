@@ -11,6 +11,7 @@ using Sport_Match.Services.Notification;
 using Sport_Match.Services.Registration;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+
 
 builder.Services.AddScoped<IEventReadService, EventService>();
 builder.Services.AddScoped<IEventWriteService, EventService>();
@@ -84,13 +85,15 @@ builder.Services.AddScoped<ICalendarService, GoogleCalendarService>();
 
 builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
-builder.Services.AddScoped<IAuthService, CookieAuthService>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
-builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+
+
+builder.Services.AddScoped<INotificationService, EmailNotificationService>();
+builder.Services.AddScoped<INotificationStrategy, EmailOnlyStrategy>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
+
+
 
 builder.Services.AddScoped<IClaimsPrincipalFactory, ClaimsPrincipalFactory>();
 builder.Services.AddScoped<IAuthService, CookieAuthService>();
