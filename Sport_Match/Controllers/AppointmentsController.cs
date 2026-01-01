@@ -6,18 +6,26 @@ using Sport_Match.Services;
 
 public class AppointmentsController : Controller
 {
-    private readonly GoogleCalendarService _calendarService;
+    private readonly IAppointmentService _appointmentService;
 
-    public AppointmentsController(GoogleCalendarService calendarService)
+    public AppointmentsController(IAppointmentService appointmentService)
     {
-        _calendarService = calendarService;
+        _appointmentService = appointmentService;
     }
 
-    
-    public IActionResult Index()
+    [HttpGet]
+    public IActionResult SelectType()
     {
-        return View("SelectType");
+        return View();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var appointments = await _appointmentService.GetAllAsync();
+        return View(appointments);
+    }
+
 
     public IActionResult Create(string? type)
     {
@@ -34,24 +42,16 @@ public class AppointmentsController : Controller
             return View(appointment);
         }
 
-       
+        await _appointmentService.CreateAsync(appointment);
+
         return RedirectToAction("Created");
     }
+
 
     public IActionResult Created()
     {
         return View();
     }
-
-    [Authorize]
-    public async Task<IActionResult> AddToGoogle()
-    {
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
-
-       
-        return Redirect("https://calendar.google.com");
-    }
-
 
     [Authorize]
     public async Task<IActionResult> SyncToGoogle()
@@ -61,8 +61,12 @@ public class AppointmentsController : Controller
         if (accessToken == null)
             return Content("Greška: Nema Google tokena.");
 
-        
+        await _appointmentService.SyncToGoogleAsync(accessToken);
+
         return Content("Google kalendar je sinkroniziran!");
     }
+
+   
+
 
 }

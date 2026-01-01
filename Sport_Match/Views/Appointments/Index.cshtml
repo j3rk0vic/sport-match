@@ -1,9 +1,118 @@
-﻿@{
-    ViewData["Title"] = "Termini";
+﻿@model List<Sport_Match.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Pregled termina";
 }
 
-<h2>Termini</h2>
+<style>
+    body {
+        background: #f5f9ff;
+    }
 
-<p>Ovdje će biti prikaz svih termina kada baza bude gotova.</p>
+    .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2f6eff;
+    }
 
-<a class="btn btn-primary" href="/Appointments/Create">Zakaži novi termin</a>
+    .page-subtitle {
+        color: gray;
+        margin-bottom: 30px;
+    }
+
+    .appointment-card {
+        background: #eaf1ff;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        transition: 0.2s;
+    }
+
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+        }
+
+    .appointment-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .appointment-meta {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
+        margin-right: 16px;
+    }
+
+    .status-confirmed {
+        background: #28c76f;
+    }
+
+    .status-open {
+        background: #ffb703;
+    }
+
+    .status-cancelled {
+        background: #ea5455;
+    }
+
+    .arrow {
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <div class="page-title">Nadolazeći sportski termini</div>
+            <div class="page-subtitle">
+                @Model.Count termina
+            </div>
+        </div>
+
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
+            Početna
+        </a>
+    </div>
+
+    @foreach (var a in Model)
+    {
+        <div class="appointment-card">
+
+            <div>
+                <div class="appointment-title">
+                    @a.Title – @a.Location
+                </div>
+
+                <div class="appointment-meta">
+                    @a.StartTime.ToString("HH:mm") – @a.EndTime.ToString("HH:mm")
+                    • @a.Date.ToString("dd.MM.yyyy")
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <span class="status-badge status-confirmed">
+                    Potvrđeno
+                </span>
+
+                <span class="arrow">››</span>
+            </div>
+        </div>
+    }
+</div>
