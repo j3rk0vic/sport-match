@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Sport_Match.Models;
 
@@ -6,30 +6,16 @@ namespace Sport_Match.Services.Auth
 {
     public class CookieAuthService : IAuthService
     {
-        public async Task SignInAsync(
-            HttpContext httpContext,
-            User user,
-            bool isPersistent = false)
+        private readonly IClaimsPrincipalFactory _claimsFactory;
+
+        public CookieAuthService(IClaimsPrincipalFactory claimsFactory)
         {
-            var claims = new List<System.Security.Claims.Claim>
-            {
-                //new System.Security.Claims.Claim(
-                //    System.Security.Claims.ClaimTypes.NameIdentifier,
-                //    user.Id.ToString()),
+            _claimsFactory = claimsFactory;
+        }
 
-                new System.Security.Claims.Claim(
-                    System.Security.Claims.ClaimTypes.Email,
-                    user.Email),
-
-                new System.Security.Claims.Claim(
-                    System.Security.Claims.ClaimTypes.Name,
-                    user.Email)
-            };
-
-            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(
-                claims,
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+        public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistent = true)
+        {
+            var principal = _claimsFactory.Create(user);
 
             var authProperties = new AuthenticationProperties
             {
@@ -38,16 +24,14 @@ namespace Sport_Match.Services.Auth
 
             await httpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new System.Security.Claims.ClaimsPrincipal(claimsIdentity),
+                principal,
                 authProperties
             );
         }
 
         public async Task SignOutAsync(HttpContext httpContext)
         {
-            await httpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-            );
+            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }
 }
