@@ -5,21 +5,24 @@ using Sport_Match.Data;
 using Sport_Match.Dtos;
 using Sport_Match.Models;
 using Sport_Match.Services.Sorting;
+using Sport_Match.Services.Factories;
 
 namespace Sport_Match.Services
 {
     public class EventService : IEventReadService, IEventWriteService
-
     {
         private readonly ApplicationDbContext _db;
         private readonly IEnumerable<IEventSortStrategy> _sortStrategies;
+        private readonly IEventFactory _eventFactory;
 
         public EventService(
             ApplicationDbContext db,
-            IEnumerable<IEventSortStrategy> sortStrategies)
+            IEnumerable<IEventSortStrategy> sortStrategies,
+            IEventFactory eventFactory)
         {
             _db = db;
             _sortStrategies = sortStrategies;
+            _eventFactory = eventFactory;
         }
 
         public IQueryable<Event> Search(EventSearchRequest req)
@@ -44,7 +47,6 @@ namespace Sport_Match.Services
             if (req.IsPrivate != null)
                 q = q.Where(e => e.IsPrivate == req.IsPrivate);
 
-          
             var strategy = _sortStrategies
                 .FirstOrDefault(s => s.CanHandle(req.SortBy));
 
@@ -72,22 +74,13 @@ namespace Sport_Match.Services
 
         public async Task<Event> CreateEventAsync(CreateEventDto dto)
         {
-            var ev = new Event
-            {
-                Name = dto.Name,
-                Sport = dto.Sport,
-                Location = dto.Location,
-                IsPrivate = dto.IsPrivate,
-                StartDateTime = dto.Date.Date + dto.Time,
-                Capacity = 0,
-                CurrentParticipants = 0
-            };
+            // 🔹 OVDJE JE FACTORY METHOD
+            var ev = _eventFactory.Create(dto);
 
             await _db.Events.AddAsync(ev);
             await _db.SaveChangesAsync();
             return ev;
         }
-
 
         public async Task<Event> GetByIdAsync(int id)
         {

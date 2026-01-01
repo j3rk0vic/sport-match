@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+using Sport_Match.Services.Facades;
+using Sport_Match.Services.Factories;
 using Sport_Match.Services.Sorting;
 using System.Net.Http;
 
@@ -76,6 +78,8 @@ builder.Services.AddScoped<IPenaltyRuleService, PenaltyRuleService>();
 
 builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IEventFactory, EventFactory>();
+builder.Services.AddScoped<IEventFacade, EventFacade>();
 
 
 var app = builder.Build();
