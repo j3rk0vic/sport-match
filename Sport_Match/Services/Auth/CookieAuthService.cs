@@ -7,6 +7,7 @@ namespace Sport_Match.Services.Auth
 {
     public class CookieAuthService : IAuthService
     {
+<<<<<<< Updated upstream
         private bool isPersistent;
 
         public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistant = true, bool isPersistent = false)
@@ -21,6 +22,18 @@ namespace Sport_Match.Services.Auth
                claims,
                CookieAuthenticationDefaults.AuthenticationScheme
            );
+=======
+        private readonly IClaimsPrincipalFactory _claimsFactory;
+
+        public CookieAuthService(IClaimsPrincipalFactory claimsFactory)
+        {
+            _claimsFactory = claimsFactory;
+        }
+
+        public async Task SignInAsync(HttpContext httpContext, User user, bool isPersistent = true)
+        {
+            var principal = _claimsFactory.Create(user);
+>>>>>>> Stashed changes
 
             var authProperties = new AuthenticationProperties
             {
@@ -29,7 +42,11 @@ namespace Sport_Match.Services.Auth
 
             await httpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
+<<<<<<< Updated upstream
                 new ClaimsPrincipal(claimsIdentity),
+=======
+                principal,
+>>>>>>> Stashed changes
                 authProperties
             );
         }

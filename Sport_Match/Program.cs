@@ -4,6 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Sport_Match.Data;
 using Sport_Match.Repositories;
 using Sport_Match.Services;
+<<<<<<< Updated upstream
+=======
+using Sport_Match.Services.Auth;
+using Sport_Match.Services.Registration;
+using Sport_Match.Services.Sorting;
+>>>>>>> Stashed changes
 using System.Net.Http;
 using Sport_Match.Services.Auth;
 using Sport_Match.Services.Security;
@@ -87,6 +93,13 @@ builder.Services.AddScoped<IUserRegistrationService>(sp =>
 
 builder.Services.AddScoped<IUserAuthenticationService>(sp =>
     sp.GetRequiredService<UserService>());
+
+builder.Services.AddScoped<IClaimsPrincipalFactory, ClaimsPrincipalFactory>();
+builder.Services.AddScoped<IAuthService, CookieAuthService>();
+
+builder.Services.AddScoped<IRegistrationStrategy, CapacityWaitlistStrategy>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
